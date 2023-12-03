@@ -1,0 +1,102 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+enum Status {
+  INVITED
+  DECLINED
+  ACCEPTED
+}
+
+model User {
+  id             String       @id @default(cuid())
+  email          String       @unique
+  password       String
+  firstName      String?
+  lastName       String?
+  avatar         String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  role           Role         @default(USER)
+  status         UserStatus[]
+  wishList       WishList[]
+  santa          Pairing[]    @relation("PairingSanta")
+  person         Pairing[]    @relation("PairingPerson")
+  thankYouAuthor ThankYou[]   @relation("ThankYouUser")
+  thankYouToUser ThankYou[]   @relation("ThankYouToUser")
+}
+
+model UserStatus {
+  id      String @id @default(cuid())
+  eventId String
+  userId  String
+  status  Status
+  user    User   @relation(fields: [userId], references: [id])
+  event   Event  @relation(fields: [eventId], references: [id])
+}
+
+model Event {
+  id           String       @id @default(cuid())
+  name         String
+  date         DateTime
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  sendReminder Boolean      @default(false)
+  userStatus   UserStatus[]
+  wishList     WishList[]
+  pairing      Pairing[]
+  thankYou     ThankYou[]
+}
+
+model Pairing {
+  id        String   @id @default(cuid())
+  eventId   String
+  santaId   String
+  personId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  event     Event    @relation(fields: [eventId], references: [id])
+  santa     User     @relation("PairingSanta", fields: [santaId], references: [id])
+  person    User     @relation("PairingPerson", fields: [personId], references: [id])
+}
+
+model ThankYou {
+  id        String   @id @default(cuid())
+  eventId   String
+  userId    String
+  toUserId  String
+  message   String
+  createdAt DateTime @default(now())
+  event     Event    @relation(fields: [eventId], references: [id])
+  user      User     @relation("ThankYouUser", fields: [userId], references: [id])
+  toUser    User     @relation("ThankYouToUser", fields: [toUserId], references: [id])
+}
+
+model WishList {
+  id              String   @id @default(cuid())
+  name            String
+  url             String
+  userId          String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  order           Int?
+  eventId         String
+  siteImage       String?
+  siteTitle       String?
+  siteDescription String?
+  user            User     @relation(fields: [userId], references: [id])
+  event           Event    @relation(fields: [eventId], references: [id])
+}
