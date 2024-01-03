@@ -2,6 +2,7 @@ import {
   json,
   type DataFunctionArgs,
   type MetaFunction,
+  redirect,
 } from "@remix-run/node";
 import { Form } from "@remix-run/react";
 import { getSupabaseSession } from "~/utils/supabase.server";
@@ -16,8 +17,11 @@ export const meta: MetaFunction = () => {
 export const loader = async ({ request }: DataFunctionArgs) => {
   const { session } = await getSupabaseSession({ request });
 
-  console.log("SS", session);
-  return null;
+  if (session) {
+    return redirect("/dashboard");
+  } else {
+    return redirect("/signin");
+  }
 };
 
 export const action = async ({ request }: DataFunctionArgs) => {

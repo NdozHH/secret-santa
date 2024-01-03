@@ -1,5 +1,4 @@
 import type { Config } from "tailwindcss";
-import defaultTheme from "tailwindcss/defaultTheme.js";
 
 export default {
   content: ["./app/**/*.{js,jsx,ts,tsx}"],
@@ -25,7 +24,10 @@ export default {
     },
     extend: {
       fontFamily: {
-        inter: ["Inter", ...defaultTheme.fontFamily.sans],
+        condensed: ["Bebas Neue", "sans-serif"],
+        handwriting: ["Kalam", "cursive"],
+        sans: ["Inter", "sans-serif"],
+        // script: ['Agbalumo', 'cursive'],
       },
     },
   },

@@ -44,7 +44,6 @@ export const loader = async ({ request }: DataFunctionArgs) => {
 export default function App() {
   const { env, session } = useLoaderData<typeof loader>();
   const supabase = useSupabase({ env, session });
-  console.log("session server", session);
 
   return (
     <html
@@ -57,7 +56,7 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body className="w-full max-w-[90rem] h-full">
+      <body className="w-full max-w-[90rem] min-h-screen">
         <Outlet context={{ supabase }} />
         <ScrollRestoration />
         <Scripts />
